@@ -97,3 +97,7 @@ C:\Users\bward\source\repos\CustomDate.Tests\obj\Debug\netcoreapp3.1\CustomDate.
 C:\Users\bward\source\repos\CustomDate.Tests\obj\Debug\netcoreapp3.1\CustomDate.Tests.dll
 C:\Users\bward\source\repos\CustomDate.Tests\obj\Debug\netcoreapp3.1\CustomDate.Tests.pdb
 C:\Users\bward\source\repos\CustomDate.Tests\obj\Debug\netcoreapp3.1\CustomDate.Tests.genruntimeconfig.cache
+C:\Users\bward\source\repos\CustomDate.Tests\bin\Debug\netcoreapp3.1\Castle.Core.dll
+C:\Users\bward\source\repos\CustomDate.Tests\bin\Debug\netcoreapp3.1\Moq.dll
+C:\Users\bward\source\repos\CustomDate.Tests\bin\Debug\netcoreapp3.1\System.Diagnostics.EventLog.dll
+C:\Users\bward\source\repos\CustomDate.Tests\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Diagnostics.EventLog.dll
