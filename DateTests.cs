@@ -274,15 +274,15 @@ namespace CustomDate.Tests
         public void WhatHolidayIsOnThisDay_FindOneHoliday_ReturnHolidayName()
         {
             //Arrange
-            var holidayProvider = new Mock<IHolidayProvider>();
+            var mockHolidayProvider = new Mock<IHolidayProvider>(); //Mock<IHolidayProvider>, IHolidayProvider is causeing an error
             List<Holiday> holidays = new List<Holiday>()
             {
                 new Holiday() {TheDate=new Date(2020, 12, 25), Name ="Christmas"},
                 new Holiday() {TheDate=new Date(2020, 10, 31), Name ="Halloween"}
             };
-            holidayProvider.Setup(m => m.GetHolidays(2020)).Returns(holidays);
+            mockHolidayProvider.Setup(m => m.GetHolidays(2020)).Returns(holidays);//holidays in Returns(holidays) is causing an error
 
-            Date date = new Date(2020, 10, 31, holidayProvider.Object);
+            Date date = new Date(2020, 10, 31, mockHolidayProvider.Object);
 
             //Act
             string foundHoliday = date.WhatHolidayIsOnThisDay();
@@ -290,6 +290,31 @@ namespace CustomDate.Tests
             //Assert
             Assert.Equal("Halloween", foundHoliday);
 
+        }
+        [Fact]
+        public void WhatHolidayIsOnThisDay_FindNoHoliday_ReturnNull()
+        {
+        // Arrange
+        var mockHolidayProvider = new Mock<IHolidayProvider>();
+
+        List<Holiday> holidays = new List<Holiday>()
+        {
+        new Holiday() { TheDate = new Date(2020, 12, 25), Name = "Christmas" },
+        new Holiday() { TheDate = new Date(2020, 10, 31), Name = "Halloween" }
+        };
+
+        // This must return the holiday list for the correct year
+        mockHolidayProvider.Setup(m => m.GetHolidays(2020))
+                       .Returns(holidays);
+
+        // Choose a date *not* in the holiday list
+        Date date = new Date(2020, 7, 4, mockHolidayProvider.Object);
+
+        // Act
+        string foundHoliday = date.WhatHolidayIsOnThisDay();
+
+        // Assert
+        Assert.Null(foundHoliday);
         }
     }
 }
