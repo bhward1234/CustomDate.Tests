@@ -162,13 +162,13 @@ namespace CustomDate.Tests
         [InlineData(28)]
         public void DateConstructor_MonthIsFebruary_DayBetween1And28_DateSetCorrectly(int day)
         {
-        // Act
-        Date d = new Date(2020, 2, day);
+            // Act
+            Date d = new Date(2020, 2, day);
 
-        // Assert
-        Assert.Equal(2020, d.Year);
-        Assert.Equal(2, d.Month);
-        Assert.Equal(day, d.Day);
+            // Assert
+            Assert.Equal(2020, d.Year);
+            Assert.Equal(2, d.Month);
+            Assert.Equal(day, d.Day);
         }
 
         //Add tests for MonthIsFebruary and DayNotBetween1And28
@@ -178,8 +178,60 @@ namespace CustomDate.Tests
         [InlineData(35)]
         public void DateConstructor_MonthIsFebruary_DayNotBetween1And28_ThrowsArgumentOutOfRangeException(int day)
         {
-        Date d;
-        Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, 2, day));
+            Date d;
+            Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, 2, day));
+        }
+
+        // Month Abbreviated
+        [Theory]
+        [InlineData(1, "Jan")]
+        [InlineData(2, "Feb")]
+        [InlineData(3, "Mar")]
+        [InlineData(4, "Apr")]
+        [InlineData(5, "May")]
+        [InlineData(6, "Aug")]
+        [InlineData(7, "Sep")]
+        [InlineData(10, "Oct")]
+        [InlineData(11, "Nov")]
+        [InlineData(12, "Dec")]
+        [InlineData(8, "Unknown")]
+        [InlineData(9, "Unknown")]
+        public void MonthAbbrev_ReturnsCorrectAbbreviation(int monthNum, string expectedAbbrev)
+        {
+            // Arrange
+            Date d = new Date(2020, monthNum, 1);
+
+            // Act
+            string abbrev = d.MonthNameAbbrev;
+
+            // Assert
+            Assert.Equal(expectedAbbrev, abbrev);
+        }
+
+        // Add One Month
+        public class DateAddOneMonthTests
+        {
+            [Theory]
+            [InlineData(2020, 1, 15, 2020, 2, 15)]   // Normal month increment
+            [InlineData(2020, 1, 31, 2020, 2, 28)]   // Jan 31 → Feb 28
+            [InlineData(2020, 4, 15, 2020, 5, 15)]   // 30-day → 31-day month
+            [InlineData(2020, 7, 31, 2020, 8, 31)]   // July 31 → Aug 31 (instructor mapping: August has 31)
+            [InlineData(2020, 12, 10, 2021, 1, 10)]  // Year rollover
+            [InlineData(2020, 12, 31, 2021, 1, 31)]  // Year rollover end-of-month
+            public void AddOneMonth_ReturnsCorrectNextMonthDate(int year, int month, int day,
+                                                           int expectedYear, int expectedMonth, int expectedDay)
+            {
+                // Arrange
+                Date d = new Date(year, month, day);
+
+                // Act
+                Date result = d.AddOneMonth();
+
+                // Assert
+                Assert.Equal(expectedYear, result.Year);
+                Assert.Equal(expectedMonth, result.Month);
+                Assert.Equal(expectedDay, result.Day);
+            }
         }
     }
 }
