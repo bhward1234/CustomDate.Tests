@@ -3,189 +3,32 @@ using Xunit;
 using DateProject;
 using Moq;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
+using System.IO;
 
 namespace CustomDate.Tests
 {
     public class DateTests
     {
-        [Fact]
-        public void MonthName_MonthIs1_ReturnsJanuary()
-        {
-            //Arrange
-            Date d = new Date();
-
-            //Act
-            string monthName = d.MonthName;
-
-            //Assert
-            Assert.Equal("January", monthName);
-
-        }
-        [Fact]
-        public void MonthName_MonthIs2_ReturnsFebruary()
-        {
-            //Arrange
-            Date d = new Date(2020, 2, 1);
-
-            //Act
-            string monthName = d.MonthName;
-
-            //Assert
-            Assert.Equal("February", monthName);
-
-        }
+        // -----------------------------
+        // MonthName tests
+        // -----------------------------
         [Theory]
-        [InlineData(12, "December")]
-        [InlineData(11, "November")]
-        [InlineData(10, "October")]
-        [InlineData(7, "September")]
+        [InlineData(1, "January")]
+        [InlineData(2, "February")]
+        [InlineData(3, "March")]
+        [InlineData(4, "April")]
+        [InlineData(5, "May")]
         [InlineData(6, "August")]
-        public void MonthName_MonthIs1To12_ReturnsCorrectMonth(int monthNum, string name)
+        [InlineData(7, "September")]
+        [InlineData(10, "October")]
+        [InlineData(11, "November")]
+        [InlineData(12, "December")]
+        public void MonthName_ReturnsCorrectMonth(int month, string expectedName)
         {
-            //Arrange
-            Date d = new Date(2020, monthNum, 1);
-
-            //Act
-            string monthName = d.MonthName;
-
-            //Assert
-            Assert.Equal(name, monthName);
-
+            Date d = new Date(2020, month, 1);
+            Assert.Equal(expectedName, d.MonthName);
         }
 
-        [Fact]
-        public void DateConstructor_YearIsTooBig_ThrowsArgumentOutOfRange()
-        {
-            //Arrange
-            int year = -10000;
-
-            //Act
-            Date d;// = new Date(year, 1, 1);
-
-            //Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(year, 1, 1));
-        }
-
-        [Fact]
-        public void DateConstructor_MonthTooSmall_ThrowArgumentOutOfRangeException()
-        {
-            //Arrange
-            int month = 0;
-
-            //Act
-            Date d;// = new Date(year, 1, 1);
-
-            //Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, month, 1));
-        }
-
-        [Fact]
-        public void DateConstructor_MonthTooBig_ThrowArgumentOutOfRangeException()
-        {
-            //Arrange
-            int month = 13;
-
-            //Act
-            Date d;// = new Date(year, 1, 1);
-
-            //Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, month, 1));
-        }
-
-        [Fact]
-        public void DateConstructor_Monthis30DayMax_DayIsBetween1And30_DateSetAccordingToParameters()
-        {
-            //Arrange
-            int day = 30;
-
-            int month = 4;
-
-            //Act
-            Date d = new Date(2020, month, day);
-
-            //Assert
-            Assert.Equal(2020, d.Year);
-            Assert.Equal(month, d.Month);
-            Assert.Equal(day, d.Day);
-        }
-        [Fact]
-        public void DateConstructor_Monthis30DayMax_DayIsNotBetween1And30_ThrowsArgumentInvalidException()
-        {
-            //Arrange
-            int day = 31;
-
-            int month = 4;
-
-            //Act
-            Date d;
-
-            //Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, month, day));
-        }
-
-        //Add tests for Monthis31DayMax nad DayBetween1And31
-        [Theory]
-        [InlineData(1, 31)]   // January
-        [InlineData(3, 31)]   // March
-        [InlineData(5, 31)]   // May
-        [InlineData(7, 31)]   // July
-        [InlineData(8, 31)]   // August
-        [InlineData(10, 31)]  // October
-        [InlineData(12, 31)]  // December
-        public void DateConstructor_MonthIs31DayMax_DayBetween1And31_DateSetCorrectly(int month, int day)
-        {
-            // Act
-            Date d = new Date(2020, month, day);
-
-            // Assert
-            Assert.Equal(2020, d.Year);
-            Assert.Equal(month, d.Month);
-            Assert.Equal(day, d.Day);
-        }
-
-
-        //Add tests for Monthis31DayMax nad DayNotBetween1And31
-        [Theory]
-        [InlineData(1, 32)]
-        [InlineData(3, 0)]
-        [InlineData(5, 40)]
-        [InlineData(7, -1)]
-        public void DateConstructor_MonthIs31DayMax_DayNotBetween1And31_ThrowsArgumentOutOfRange(int month, int day)
-        {
-            Date d;
-            Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, month, day));
-        }
-
-
-        //Add tests for MonthIsFebruary and DayBetween1And28
-        [Theory]
-        [InlineData(1)]
-        [InlineData(15)]
-        [InlineData(28)]
-        public void DateConstructor_MonthIsFebruary_DayBetween1And28_DateSetCorrectly(int day)
-        {
-            // Act
-            Date d = new Date(2020, 2, day);
-
-            // Assert
-            Assert.Equal(2020, d.Year);
-            Assert.Equal(2, d.Month);
-            Assert.Equal(day, d.Day);
-        }
-
-        //Add tests for MonthIsFebruary and DayNotBetween1And28
-        [Theory]
-        [InlineData(0)]
-        [InlineData(29)]
-        [InlineData(35)]
-        public void DateConstructor_MonthIsFebruary_DayNotBetween1And28_ThrowsArgumentOutOfRangeException(int day)
-        {
-            Date d;
-            Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, 2, day));
-        }
-
-        // Month Abbreviated
         [Theory]
         [InlineData(1, "Jan")]
         [InlineData(2, "Feb")]
@@ -199,122 +42,294 @@ namespace CustomDate.Tests
         [InlineData(12, "Dec")]
         [InlineData(8, "Unknown")]
         [InlineData(9, "Unknown")]
-        public void MonthAbbrev_ReturnsCorrectAbbreviation(int monthNum, string expectedAbbrev)
+        public void MonthAbbrev_ReturnsCorrectAbbreviation(int month, string expectedAbbrev)
         {
-            // Arrange
-            Date d = new Date(2020, monthNum, 1);
-
-            // Act
-            string abbrev = d.MonthNameAbbrev;
-
-            // Assert
-            Assert.Equal(expectedAbbrev, abbrev);
+            Date d = new Date(2020, month, 1);
+            Assert.Equal(expectedAbbrev, d.MonthNameAbbrev);
         }
 
-        // Add One Month
-        public class DateAddOneMonthTests
+        // -----------------------------
+        // Constructor validation tests
+        // -----------------------------
+        [Fact]
+        public void Constructor_YearOutOfRange_Throws()
         {
-            [Theory]
-            [InlineData(2020, 1, 15, 2020, 2, 15)]   // Normal month increment
-            [InlineData(2020, 1, 31, 2020, 2, 28)]   // Jan 31 → Feb 28
-            [InlineData(2020, 4, 15, 2020, 5, 15)]   // 30-day → 31-day month
-            [InlineData(2020, 7, 31, 2020, 8, 31)]   // July 31 → Aug 31 (instructor mapping: August has 31)
-            [InlineData(2020, 12, 10, 2021, 1, 10)]  // Year rollover
-            [InlineData(2020, 12, 31, 2021, 1, 31)]  // Year rollover end-of-month
-            public void AddOneMonth_ReturnsCorrectNextMonthDate(int year, int month, int day,
-                                                           int expectedYear, int expectedMonth, int expectedDay)
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Date(-10000, 1, 1));
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(13)]
+        public void Constructor_MonthOutOfRange_Throws(int month)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Date(2020, month, 1));
+        }
+
+        [Theory]
+        [InlineData(4, 31)] // 30-day month
+        [InlineData(2, 29)] // Feb
+        [InlineData(1, 32)] // 31-day month
+        public void Constructor_InvalidDay_Throws(int month, int day)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Date(2020, month, day));
+        }
+
+        [Theory]
+        [InlineData(1, 31)]
+        [InlineData(3, 31)]
+        [InlineData(5, 31)]
+        [InlineData(7, 31)]
+        [InlineData(8, 31)]
+        [InlineData(10, 31)]
+        [InlineData(12, 31)]
+        public void Constructor_ValidDay_SetsDateCorrectly(int month, int day)
+        {
+            Date d = new Date(2020, month, day);
+            Assert.Equal(2020, d.Year);
+            Assert.Equal(month, d.Month);
+            Assert.Equal(day, d.Day);
+        }
+
+        [Theory]
+        [InlineData(2, 1)]
+        [InlineData(2, 28)]
+        public void Constructor_FebruaryValidDays_SetsCorrectly(int month, int day)
+        {
+            Date d = new Date(2020, month, day);
+            Assert.Equal(2020, d.Year);
+            Assert.Equal(month, d.Month);
+            Assert.Equal(day, d.Day);
+        }
+
+        // -----------------------------
+        // AddOneMonth tests
+        // -----------------------------
+        [Theory]
+        [InlineData(2020, 1, 15, 2020, 2, 15)]
+        [InlineData(2020, 1, 31, 2020, 2, 28)]
+        [InlineData(2020, 4, 15, 2020, 5, 15)]
+        [InlineData(2020, 7, 31, 2020, 8, 31)]
+        [InlineData(2020, 12, 10, 2021, 1, 10)]
+        [InlineData(2020, 12, 31, 2021, 1, 31)]
+        public void AddOneMonth_ReturnsCorrectDate(int year, int month, int day,
+                                                   int expectedYear, int expectedMonth, int expectedDay)
+        {
+            Date d = new Date(year, month, day);
+            Date result = d.AddOneMonth();
+            Assert.Equal(expectedYear, result.Year);
+            Assert.Equal(expectedMonth, result.Month);
+            Assert.Equal(expectedDay, result.Day);
+        }
+
+        // -----------------------------
+        // IsToday tests with mock
+        // -----------------------------
+        [Fact]
+        public void IsToday_MatchingDate_ReturnsTrue()
+        {
+            var mockProvider = new Mock<ISystemDateProvider>();
+            mockProvider.Setup(p => p.GetToday()).Returns(new Date(2020, 1, 1));
+
+            var d = new Date(2020, 1, 1, mockProvider.Object);
+            Assert.True(d.IsToday());
+        }
+
+        [Fact]
+        public void IsToday_NonMatchingDate_ReturnsFalse()
+        {
+            var mockProvider = new Mock<ISystemDateProvider>();
+            mockProvider.Setup(p => p.GetToday()).Returns(new Date(2020, 1, 1));
+
+            var d = new Date(2020, 1, 2, mockProvider.Object);
+            Assert.False(d.IsToday());
+        }
+
+        // -----------------------------
+        // WhatHolidayIsOnThisDay tests
+        // -----------------------------
+        [Fact]
+        public void WhatHolidayIsOnThisDay_SingleHoliday_ReturnsName()
+        {
+            var mock = new Mock<IHolidayProvider>();
+            var holidays = new List<Holiday>
             {
-                // Arrange
-                Date d = new Date(year, month, day);
-
-                // Act
-                Date result = d.AddOneMonth();
-
-                // Assert
-                Assert.Equal(expectedYear, result.Year);
-                Assert.Equal(expectedMonth, result.Month);
-                Assert.Equal(expectedDay, result.Day);
-            }
-        }
-
-        // Mocks
-        [Fact]
-        public void IsToday_DateMatchesToday_ReturnsTrue()
-        {
-            //Arrange
-            var systemDateProvider = new Mock<ISystemDateProvider>();
-            systemDateProvider.Setup(m => m.GetToday()).Returns(new Date(2020, 01, 01));
-
-            Date date = new Date(2020, 01, 01, systemDateProvider.Object);
-
-            //Act
-            bool isToday = date.IsToday();
-
-            //Assert
-            Assert.True(isToday);
-        }
-
-        [Fact]
-        public void IsToday_DateDoesNotMatchesToday_ReturnsFalse()
-        {
-            //Arrange
-            var systemDateProvider = new Mock<ISystemDateProvider>();
-            systemDateProvider.Setup(m => m.GetToday()).Returns(new Date(2020, 01, 01));
-
-            Date date = new Date(2020, 01, 02, systemDateProvider.Object);
-
-            //Act
-            bool isToday = date.IsToday();
-
-            //Assert
-            Assert.False(isToday);
-        }
-
-        [Fact]
-        public void WhatHolidayIsOnThisDay_FindOneHoliday_ReturnHolidayName()
-        {
-            //Arrange
-            var mockHolidayProvider = new Mock<IHolidayProvider>(); //Mock<IHolidayProvider>, IHolidayProvider is causeing an error
-            List<Holiday> holidays = new List<Holiday>()
-            {
-                new Holiday() {TheDate=new Date(2020, 12, 25), Name ="Christmas"},
-                new Holiday() {TheDate=new Date(2020, 10, 31), Name ="Halloween"}
+                new Holiday { TheDate = new Date(2020, 10, 31), Name = "Halloween" },
+                new Holiday { TheDate = new Date(2020, 12, 25), Name = "Christmas" }
             };
-            mockHolidayProvider.Setup(m => m.GetHolidays(2020)).Returns(holidays);//holidays in Returns(holidays) is causing an error
+            mock.Setup(h => h.GetHolidays(2020)).Returns(holidays);
 
-            Date date = new Date(2020, 10, 31, mockHolidayProvider.Object);
-
-            //Act
-            string foundHoliday = date.WhatHolidayIsOnThisDay();
-
-            //Assert
-            Assert.Equal("Halloween", foundHoliday);
-
+            var d = new Date(2020, 10, 31, mock.Object);
+            var result = d.WhatHolidayIsOnThisDay();
+            Assert.Equal("Halloween", result);
         }
+
         [Fact]
-        public void WhatHolidayIsOnThisDay_FindNoHoliday_ReturnNull()
+        public void WhatHolidayIsOnThisDay_NoHoliday_ReturnsNull()
         {
-        // Arrange
-        var mockHolidayProvider = new Mock<IHolidayProvider>();
+            var mock = new Mock<IHolidayProvider>();
+            var holidays = new List<Holiday>
+            {
+                new Holiday { TheDate = new Date(2020, 12, 25), Name = "Christmas" },
+                new Holiday { TheDate = new Date(2020, 10, 31), Name = "Halloween" }
+            };
+            mock.Setup(h => h.GetHolidays(2020)).Returns(holidays);
 
-        List<Holiday> holidays = new List<Holiday>()
+            var d = new Date(2020, 7, 4, mock.Object);
+            var result = d.WhatHolidayIsOnThisDay();
+            Assert.Null(result);
+        }
+
+        // -----------------------------
+        // WhatHolidaysAreOnThisDay tests
+        // -----------------------------
+        [Fact]
+        public void WhatHolidaysAreOnThisDay_OneHoliday_ReturnsSingle()
         {
-        new Holiday() { TheDate = new Date(2020, 12, 25), Name = "Christmas" },
-        new Holiday() { TheDate = new Date(2020, 10, 31), Name = "Halloween" }
-        };
+            var mock = new Mock<IHolidayProvider>();
+            var holidays = new List<Holiday>
+            {
+                new Holiday { TheDate = new Date(2020, 10, 31), Name = "Halloween" }
+            };
+            mock.Setup(h => h.GetHolidays(2020)).Returns(holidays);
 
-        // This must return the holiday list for the correct year
-        mockHolidayProvider.Setup(m => m.GetHolidays(2020))
-                       .Returns(holidays);
+            var d = new Date(2020, 10, 31, mock.Object);
+            var result = d.WhatHolidaysAreOnThisDay();
 
-        // Choose a date *not* in the holiday list
-        Date date = new Date(2020, 7, 4, mockHolidayProvider.Object);
+            Assert.Single(result);
+            Assert.Contains("Halloween", result);
+        }
 
-        // Act
-        string foundHoliday = date.WhatHolidayIsOnThisDay();
+        [Fact]
+        public void WhatHolidaysAreOnThisDay_MultipleHolidays_ReturnsAll()
+        {
+            var mock = new Mock<IHolidayProvider>();
+            var holidays = new List<Holiday>
+            {
+                new Holiday { TheDate = new Date(2020, 12, 25), Name = "Christmas" },
+                new Holiday { TheDate = new Date(2020, 12, 25), Name = "Gift Day" }
+            };
+            mock.Setup(h => h.GetHolidays(2020)).Returns(holidays);
 
-        // Assert
-        Assert.Null(foundHoliday);
+            var d = new Date(2020, 12, 25, mock.Object);
+            var result = d.WhatHolidaysAreOnThisDay();
+
+            Assert.Equal(2, result.Count);
+            Assert.Contains("Christmas", result);
+            Assert.Contains("Gift Day", result);
+        }
+
+        [Fact]
+        public void WhatHolidaysAreOnThisDay_NoMatches_ReturnsEmpty()
+        {
+            var mock = new Mock<IHolidayProvider>();
+            var holidays = new List<Holiday>
+            {
+                new Holiday { TheDate = new Date(2020, 12, 25), Name = "Christmas" }
+            };
+            mock.Setup(h => h.GetHolidays(2020)).Returns(holidays);
+
+            var d = new Date(2020, 7, 4, mock.Object);
+            var result = d.WhatHolidaysAreOnThisDay();
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void WhatHolidaysAreOnThisDay_EmptyList_ReturnsEmpty()
+        {
+            var mock = new Mock<IHolidayProvider>();
+            mock.Setup(h => h.GetHolidays(2020)).Returns(new List<Holiday>());
+
+            var d = new Date(2020, 1, 1, mock.Object);
+            var result = d.WhatHolidaysAreOnThisDay();
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void WhatHolidaysAreOnThisDay_NullList_ReturnsEmpty()
+        {
+            var mock = new Mock<IHolidayProvider>();
+            mock.Setup(h => h.GetHolidays(2020)).Returns((List<Holiday>)null);
+
+            var d = new Date(2020, 1, 1, mock.Object);
+            var result = d.WhatHolidaysAreOnThisDay();
+            Assert.Empty(result);
+        }
+
+        // -----------------------------
+        // WhoseBirthdayIsIt tests
+        // -----------------------------
+
+        private string CreateTempBirthdayFile(params string[] lines)
+        {
+            string tempFile = Path.GetTempFileName();
+            File.WriteAllLines(tempFile, lines);
+            return tempFile;
+        }
+
+        [Fact]
+        public void WhoseBirthdayIsIt_ReturnsMatchingNames()
+        {
+            var date = new Date(2025, 12, 3);
+            string filePath = CreateTempBirthdayFile(
+                "John,1990-12-03",
+                "Mary,1985-07-04",
+                "Alice,2000-12-03"
+            );
+
+            var result = date.WhoseBirthdayIsIt(filePath);
+
+            Assert.Contains("John", result);
+            Assert.Contains("Alice", result);
+            Assert.DoesNotContain("Mary", result);
+
+            File.Delete(filePath);
+        }
+
+        [Fact]
+        public void WhoseBirthdayIsIt_ReturnsEmptyIfNoMatch()
+        {
+            var date = new Date(2025, 1, 1);
+            string filePath = CreateTempBirthdayFile(
+                "John,1990-12-03",
+                "Mary,1985-07-04"
+            );
+
+            var result = date.WhoseBirthdayIsIt(filePath);
+
+            Assert.Empty(result);
+
+            File.Delete(filePath);
+        }
+
+        [Fact]
+        public void WhoseBirthdayIsIt_ReturnsEmptyIfFileDoesNotExist()
+        {
+            var date = new Date(2025, 1, 1);
+            string filePath = "nonexistentfile.csv";
+
+            var result = date.WhoseBirthdayIsIt(filePath);
+
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void WhoseBirthdayIsIt_IgnoresInvalidLines()
+        {
+            var date = new Date(2025, 12, 3);
+            string filePath = CreateTempBirthdayFile(
+                "John,1990-12-03",
+                "InvalidLineWithoutComma",
+                "Alice,NotADate",
+                "Bob,2025-12-03"
+            );
+
+            var result = date.WhoseBirthdayIsIt(filePath);
+
+            Assert.Contains("John", result);
+            Assert.Contains("Bob", result);
+            Assert.DoesNotContain("Alice", result);
+
+            File.Delete(filePath);
         }
     }
 }
