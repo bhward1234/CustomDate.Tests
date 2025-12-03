@@ -120,9 +120,66 @@ namespace CustomDate.Tests
             //Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, month, day));
         }
+
         //Add tests for Monthis31DayMax nad DayBetween1And31
+        [Theory]
+        [InlineData(1, 31)]   // January
+        [InlineData(3, 31)]   // March
+        [InlineData(5, 31)]   // May
+        [InlineData(7, 31)]   // July
+        [InlineData(8, 31)]   // August
+        [InlineData(10, 31)]  // October
+        [InlineData(12, 31)]  // December
+        public void DateConstructor_MonthIs31DayMax_DayBetween1And31_DateSetCorrectly(int month, int day)
+        {
+            // Act
+            Date d = new Date(2020, month, day);
+
+            // Assert
+            Assert.Equal(2020, d.Year);
+            Assert.Equal(month, d.Month);
+            Assert.Equal(day, d.Day);
+        }
+
+
         //Add tests for Monthis31DayMax nad DayNotBetween1And31
+        [Theory]
+        [InlineData(1, 32)]
+        [InlineData(3, 0)]
+        [InlineData(5, 40)]
+        [InlineData(7, -1)]
+        public void DateConstructor_MonthIs31DayMax_DayNotBetween1And31_ThrowsArgumentOutOfRange(int month, int day)
+        {
+            Date d;
+            Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, month, day));
+        }
+
+
         //Add tests for MonthIsFebruary and DayBetween1And28
+        [Theory]
+        [InlineData(1)]
+        [InlineData(15)]
+        [InlineData(28)]
+        public void DateConstructor_MonthIsFebruary_DayBetween1And28_DateSetCorrectly(int day)
+        {
+        // Act
+        Date d = new Date(2020, 2, day);
+
+        // Assert
+        Assert.Equal(2020, d.Year);
+        Assert.Equal(2, d.Month);
+        Assert.Equal(day, d.Day);
+        }
+
         //Add tests for MonthIsFebruary and DayNotBetween1And28
+        [Theory]
+        [InlineData(0)]
+        [InlineData(29)]
+        [InlineData(35)]
+        public void DateConstructor_MonthIsFebruary_DayNotBetween1And28_ThrowsArgumentOutOfRangeException(int day)
+        {
+        Date d;
+        Assert.Throws<ArgumentOutOfRangeException>(() => d = new Date(2020, 2, day));
+        }
     }
 }
